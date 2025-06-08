@@ -23,7 +23,7 @@ can.pack(fill="both", expand=True)
 k = 1.38 * 10 ** -16  # Bolcman's postoyannaya
 R = 2
 N = 100
-V = 50
+V = 10
 m = 6.65 * 10 ** -24  # mass of molecule of He
 
 # List of spheres creation
