@@ -1,56 +1,74 @@
 import math
-from random import random
+import tkinter
+import tkinter as tk
+import random
 
+# Просто какие-то базовые классы, функции и константы
 
-# Base is some low-level code (like basic classes and functions)
+fps = 30  # frames per second. Physics time resolution is also fps
+dt = 1 / fps
+w = 800  # Высота окна (и сосуда)
+h = 600  # Ширина окна (и сосуда)
+k = 1.38 * 10 ** -16  # Bolcman's postoyannaya
+m = 6.65 * 10 ** -24  # mass of molecule of He
+# Как и ожидалось, при высоких температурах молекулы емаё как летают
+T = 0.001
 
+# Настройка TKinter
+lin = tk.Tk()  # Setting up tkinter
+lin.title("Our Super Program 1")
+lin.geometry(f'{w}x{h}')
+canvas = tkinter.Canvas(lin)
+canvas.configure(bg="white")
+canvas.pack(fill="both", expand=True)
 
 class Sphere:
-    def __init__(self, x, y, r, Vx, Vy):
+    def __init__(self, x, y, r, Vx, Vy, ts):
         self.x = x
         self.y = y
         self.r = r
         self.Vx = Vx
         self.Vy = Vy
+        self.ts = ts  # объект сферы в TKinter
 
 
 def createSpheresList(N, R, V):
     Sprs = []
+    # Создание сферы
     for i in range(N):
+        Vx = random.gauss(0, math.sqrt(k*T/m))
+        Vy = random.gauss(0, math.sqrt(k*T/m))
+        # Расположение в сосуде
         good = False
         while not good:
-            # Just trying not to get infinite velocity (that breaks code)
-            try:
-                a = math.pi * random()
-                if a < 0.5:
-                    Vx = -V / math.sin(a)
-                else:
-                    Vx = V / math.sin(a)
-                b = math.pi * random()
-                if b < 0.5:
-                    Vy = -V / math.sin(b)
-                else:
-                    Vy = V / math.sin(b)
-
+            x = R + (w - 2 * R) * random.random()
+            y = R + (h - 2 * R) * random.random()
+            if len(canvas.find_overlapping(x - R, y - R, x + R, y + R)) == 0:
                 good = True
-            except:
-                # Pofig
-                pass
-        """
-        # Entropy checking
-        Vx = 0
-        Vy = 0
-        Vx = Vx + 1000
-        """
-        Sprs.append(Sphere(800 * random(), 600 * random(), R, Vx, Vy))
+
+        stupidity = canvas.create_oval(x - R, y - R, x + R, y + R, fill="blue", outline="Black", width=1)
+        Sprs.append(Sphere(x, y, R, Vx, Vy, stupidity))
     return Sprs
 
 
-def Energy(Sprs: list, m):
+def Energy(Sprs: list, m: float):
     E = 0
     for s in Sprs:
         E = E + m * (s.Vx ** 2 + s.Vy ** 2) / 2
     return E
+
+
+def Entropy(Sprs: list, m: float):
+    N = len(Sprs)
+    nl = 0 # количество молекул слева
+    S_T = 0 # Температурная часть энтропии
+    for s in Sprs:
+        S_T = S_T + k * math.log(m * (s.Vx ** 2 + s.Vy ** 2) / 2)
+        # В какой части находится данная сфера
+        if s.x <= w / 2:
+            nl = nl + 1
+
+    return k*math.log(math.factorial(N)/math.factorial(nl)/math.factorial(N-nl)) + S_T
 
 
 # Calculating bubuh
