@@ -1,2 +1,20 @@
 hello
 halloooooooooOOOOooooOoOo
+
+
+def Energy(Sprs: list, m: float):
+    E = 0
+    for s in Sprs:
+        E = E + m * (s.Vx ** 2 + s.Vy ** 2) / 2
+    return E
+
+
+def Entropy(Sprs: list, m: float):
+    N = len(Sprs)
+    nl = 0 # количество молекул слева
+    S_T = 0 # Температурная часть энтропии
+    for s in Sprs:
+        S_T = S_T + k * math.log(m * (s.Vx ** 2 + s.Vy ** 2) / 2)
+        # В какой части находится данная сфера
+        if s.x <= w / 2:
+            nl = nl + 1
