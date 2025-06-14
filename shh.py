@@ -30,6 +30,12 @@ def tritt():
                 gwkeit[i, 0] *= -1
             elif x > karton_lange / 2 and vx < 0 and v < grenze_v:
                 gwkeit[i, 0] *= -1
+        if abs(y - karton_breite / 2) < 0.05:
+            v = np.linalg.norm(gwkeit[i])
+            if y < karton_breite / 2 and vy > 0 and v < grenze_v:
+                gwkeit[i, 1] *= -1
+            elif y > karton_breite / 2 and vy < 0 and v < grenze_v:
+                gwkeit[i, 1] *= -1        
         lage[i] += gwkeit[i] * dt
 
 # отрисовка
