@@ -1,20 +1,17 @@
 hello
 halloooooooooOOOOooooOoOo
 
-
-def Energy(Sprs: list, m: float):
-    E = 0
-    for s in Sprs:
-        E = E + m * (s.Vx ** 2 + s.Vy ** 2) / 2
-    return E
-
-
-def Entropy(Sprs: list, m: float):
-    N = len(Sprs)
-    nl = 0 # количество молекул слева
-    S_T = 0 # Температурная часть энтропии
-    for s in Sprs:
-        S_T = S_T + k * math.log(m * (s.Vx ** 2 + s.Vy ** 2) / 2)
-        # В какой части находится данная сфера
-        if s.x <= w / 2:
-            nl = nl + 1
+Вроде бы, это был демон, я его переписал
+        '''if abs(x - w / 2) < 0.05:
+            v = np.linalg.norm(gwkeit[i])
+            if x < w / 2 and vx > 0 and v > grenze_v:
+                gwkeit[i, 0] *= -1
+            elif x > w / 2 and vx < 0 and v < grenze_v:
+                gwkeit[i, 0] *= -1
+        if abs(y - h / 2) < 0.05:
+            v = np.linalg.norm(gwkeit[i])
+            if y < h / 2 and vy > 0 and v < grenze_v:
+                gwkeit[i, 1] *= -1
+            elif y > h / 2 and vy < 0 and v < grenze_v:
+                gwkeit[i, 1] *= -1
+        lage[i] += gwkeit[i] * dt'''

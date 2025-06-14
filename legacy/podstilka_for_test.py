@@ -1,7 +1,8 @@
 import Base
-from Base import m, w, h, dt, canvas
+from Base import m, w, h
+from parameter import dt
 
-
+canvas = 1
 # podstilka is some magic code, that hides here. So, main looks beautiful.
 
 

@@ -1,4 +1,9 @@
-from animation import run
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from animation import animirien, fig
+from parameter import dt
+
 
 if __name__ == '__main__':
-    run()
+    ani = FuncAnimation(fig, animirien, interval=dt)
+    plt.show()

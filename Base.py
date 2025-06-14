@@ -1,68 +1,39 @@
 import math
-import tkinter
-import tkinter as tk
-import random
+from random import random, gauss
+from parameter import N, k, T, m, w, h, r
 
-# Просто какие-то базовые классы, функции и константы
-
-fps = 30  # frames per second. Physics time resolution is also fps
-dt = 1 / fps
-w = 800  # Высота окна (и сосуда)
-h = 600  # Ширина окна (и сосуда)
-k = 1.38 * 10 ** -16  # Bolcman's postoyannaya
-m = 6.65 * 10 ** -24  # mass of molecule of He
-# Как и ожидалось, при высоких температурах молекулы емаё как летают
-T = 0.001
-
-# Настройка TKinter
-lin = tk.Tk()  # Setting up tkinter
-lin.title("Our Super Program 1")
-lin.geometry(f'{w}x{h}')
-canvas = tkinter.Canvas(lin)
-canvas.configure(bg="white")
-canvas.pack(fill="both", expand=True)
+molecule_list = [] # Список молекул
 
 class Sphere:
-    def __init__(self, x, y, r, Vx, Vy, ts):
+    def __init__(self, x, y, r, Vx, Vy):
         self.x = x
         self.y = y
         self.r = r
         self.Vx = Vx
         self.Vy = Vy
-        self.ts = ts  # объект сферы в TKinter
 
 
-def createSpheresList(N, R, V):
-    Sprs = []
-    # Создание сферы
-    for i in range(N):
-        Vx = random.gauss(0, math.sqrt(k*T/m))
-        Vy = random.gauss(0, math.sqrt(k*T/m))
-        # Расположение в сосуде
-        good = False
-        while not good:
-            x = R + (w - 2 * R) * random.random()
-            y = R + (h - 2 * R) * random.random()
-            if len(canvas.find_overlapping(x - R, y - R, x + R, y + R)) == 0:
-                good = True
+def get_random_coordinates(w: float, h: float):
+    x = w*random()
+    y = h*random()
+    return x,y
 
-        stupidity = canvas.create_oval(x - R, y - R, x + R, y + R, fill="blue", outline="Black", width=1)
-        Sprs.append(Sphere(x, y, R, Vx, Vy, stupidity))
-    return Sprs
+def get_random_velocity(T: float, k: float, m: float):
+    Vx = gauss(0, math.sqrt(k * T / m))
+    Vy = gauss(0, math.sqrt(k * T / m))
+    return Vx,Vy
 
-
-def Energy(Sprs: list, m: float):
+def Energy():
     E = 0
-    for s in Sprs:
+    for s in molecule_list:
         E = E + m * (s.Vx ** 2 + s.Vy ** 2) / 2
     return E
 
 
-def Entropy(Sprs: list, m: float):
-    N = len(Sprs)
+def Entropy():
     nl = 0 # количество молекул слева
     S_T = 0 # Температурная часть энтропии
-    for s in Sprs:
+    for s in molecule_list:
         S_T = S_T + k * math.log(m * (s.Vx ** 2 + s.Vy ** 2) / 2)
         # В какой части находится данная сфера
         if s.x <= w / 2:
@@ -70,8 +41,20 @@ def Entropy(Sprs: list, m: float):
 
     return k*math.log(math.factorial(N)/math.factorial(nl)/math.factorial(N-nl)) + S_T
 
+# Создание молекул
+for i in range(N):
+    x, y = get_random_coordinates(w,h)
+    Vx, Vy = get_random_velocity(T,k,m)
+    molecule = Sphere(x, y, r, Vx, Vy)
+    molecule_list.append(molecule)
+E_0 = Energy()
+S_0 = Entropy()
 
-# Calculating bubuh
+
+
+
+
+# Считается столкновение молекул
 def bubuh(Vx1, Vy1, Vx2, Vy2, rx, ry):
     theta = math.atan2(ry, rx)
     Va1 = Vx1 * math.cos(theta) + Vy1 * math.sin(theta)
