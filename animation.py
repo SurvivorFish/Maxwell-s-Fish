@@ -3,6 +3,8 @@ from parameter import w, h, r, dt, alpha
 from Base import molecule_list, Energy, Entropy, E_0, S_0
 from Maxwell_demon import dimon
 
+Demons_Entropy = 0
+
 xs = []  # Список x-овых координат молекул
 ys = []  # Список y-овых координат молекул
 coords = []  # Список координат [x,y]
@@ -16,6 +18,7 @@ for molecule in molecule_list:
 
 # функция обновления
 def tritt():
+    global Demons_Entropy
     coords.clear()
     xs.clear()
     ys.clear()
@@ -28,7 +31,7 @@ def tritt():
         if molecule.y <= r or molecule.y >= h - r:
             molecule.Vy = -molecule.Vy
 
-        can_move = dimon(molecule)
+        can_move, Demons_Entropy = dimon(molecule, Demons_Entropy)
 
         if can_move:
             # Обновление координат молекул
@@ -43,7 +46,7 @@ def tritt():
         coords.append([x, y])
 
         if True:  # Пишу энергию, энтропию
-            print(Energy(), Entropy() - S_0)
+            print(Entropy() - S_0, Entropy() - S_0 + Demons_Entropy)
 
 
 # ==============================
