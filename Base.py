@@ -29,6 +29,8 @@ def Energy():
         E = E + m * (s.Vx ** 2 + s.Vy ** 2) / 2
     return E
 
+def Temperature():
+    return Energy()/N/k
 
 def Entropy():
     nl = 0 # количество молекул слева

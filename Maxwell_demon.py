@@ -1,8 +1,8 @@
 import math
 import random
 
-from Base import Sphere
-from parameter import w, h, N, dt, alpha, m, k, T
+from Base import Sphere, Temperature
+from parameter import w, h, N, dt, alpha, m, k
 
 # Sarcophilus harrisii
 type_of_Dmitriy = 3  # Тип демона
@@ -35,7 +35,7 @@ def dimon(s: Sphere, Demons_Entropy: float):
 # По модулям
 def dimon_1(s: Sphere, ddt2: float, Demons_Entropy: float):
     # Проверка: если молекула летит вправо и имеет большую скорость, то отражается и наоборот тоже
-    if s.Vx * (m * (s.Vx ** 2 + s.Vy ** 2) - k * T) > 0:
+    if s.Vx * (m * (s.Vx ** 2 + s.Vy ** 2) - k * Temperature()) > 0:
         s.Vx = -s.Vx
     else:
         # Если молекула не отражается, значит она взаимодействует с демоном. То есть он должен что-то записать про неё в свою информацию
@@ -68,9 +68,9 @@ def dimon_3(s: Sphere, ddt2: float, Demons_Entropy: float):
     # Просто есть какая-то энергия, которая тратится на проход через демона. Но есть какая-то вероятность, что демон не сработает в обратном направлении (пропустит молекулы)
     # Эта вероятность - по Гиббсу
     # Энергия, необходимая для прохода через демона
-    E = k * T / 2
+    E = k * Temperature() / 2
     # Переменная, означающая, открылась ли дверь случайно
-    door_opened = (math.exp(-E / k / T) >= random.random())
+    door_opened = (math.exp(-E / k / Temperature()) >= random.random())
     # Если дверь не открыта случайно, значит демон работает. В противном случае молекула просто пролетает
     if not door_opened:
         # Если летела справа, то сталкивается с демоном и отдаёт часть энергии на проход
@@ -78,7 +78,7 @@ def dimon_3(s: Sphere, ddt2: float, Demons_Entropy: float):
         if s.Vx < 0 and E_0 > E:
             s.Vx = s.Vx * math.sqrt(1 - E / E_0)
             s.Vy = s.Vy * math.sqrt(1 - E / E_0)
-            Demons_Entropy = Demons_Entropy + 2 * E / T
+            Demons_Entropy = Demons_Entropy + 2 * E / Temperature()
         # Если летела слева, то отражаем
         else:
             s.Vx = -s.Vx

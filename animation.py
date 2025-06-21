@@ -1,7 +1,19 @@
+import time
+
 import matplotlib.pyplot as plt
-from parameter import w, h, r, dt, alpha
-from Base import molecule_list, Energy, Entropy, E_0, S_0
+from parameter import w, h, r, dt, alpha, doGraph, doPrint
+from Base import molecule_list, Energy, Entropy, Temperature, E_0, S_0
 from Maxwell_demon import dimon
+import keyboard
+
+if doGraph:
+    time0 = time.time()
+    # Массивы для графиков
+    GraphTime = []
+    Et = []
+    St = []
+    Tt = []
+    MegaFile = open('Graph data/Data.txt', 'w')
 
 Demons_Entropy = 0
 
@@ -45,8 +57,14 @@ def tritt():
         ys.append(y)
         coords.append([x, y])
 
-        if True:  # Пишу энергию, энтропию
+        # Если уж не выводим в отельный файл
+        if doPrint:  # Пишу энергию, энтропию
             print(Entropy() - S_0, Entropy() - S_0 + Demons_Entropy)
+    if doGraph:
+        GraphTime.append(time.time() - time0)
+        Et.append(Energy())
+        St.append(Entropy())
+        Tt.append(Temperature())
 
 
 # ==============================
@@ -72,5 +90,11 @@ def animirien(frame):
     ax.set_ylim(0, h)
     # Рисование полосочки, означающей демона
     ax.axvline(w / 2, color='green', linestyle='solid')
+    if keyboard.is_pressed('q'):  # Безопасно закрывает всё
+        for t in range(len(GraphTime)):
+            print(GraphTime[t], Et[t], St[t], Tt[t], file=MegaFile)
+        MegaFile.close()
+        plt.close()
+
 
     return (sc,)
