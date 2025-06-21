@@ -1,7 +1,7 @@
 hello
 halloooooooooOOOOooooOoOo
 
-Вроде бы, это был демон, я его переписал
+Демон от Кати. Я его переписал под новый код. И убрал разделение на вертикальную и горизонтальную скорость
         '''if abs(x - w / 2) < 0.05:
             v = np.linalg.norm(gwkeit[i])
             if x < w / 2 and vx > 0 and v > grenze_v:

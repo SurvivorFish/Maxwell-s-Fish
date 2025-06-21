@@ -57,7 +57,13 @@ S_0 = Entropy()
 
 
 # Считается столкновение молекул
-def bubuh(Vx1, Vy1, Vx2, Vy2, rx, ry):
+def bubuh(s1: Sphere, s2: Sphere):
+    Vx1 = s1.Vx
+    Vy1 = s1.Vy
+    Vx2 = s2.Vx
+    Vy2 = s2.Vy
+    rx = s1.x-s2.x
+    ry = s1.y-s2.y
     theta = math.atan2(ry, rx)
     Va1 = Vx1 * math.cos(theta) + Vy1 * math.sin(theta)
     Vb1 = - Vx1 * math.sin(theta) + Vy1 * math.cos(theta)
@@ -70,4 +76,8 @@ def bubuh(Vx1, Vy1, Vx2, Vy2, rx, ry):
     Vy1f = Va1 * math.sin(theta) + Vb1 * math.cos(theta)
     Vx2f = Va2 * math.cos(theta) - Vb2 * math.sin(theta)
     Vy2f = Va2 * math.sin(theta) + Vb2 * math.cos(theta)
-    return Vx1f, Vy1f, Vx2f, Vy2f
+    s1.Vx = Vx1f
+    s1.Vy = Vy1f
+    s2.Vx = Vx2f
+    s2.Vy = Vy2f
+    return

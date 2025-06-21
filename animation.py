@@ -1,21 +1,26 @@
 import time
 
 import matplotlib.pyplot as plt
-from parameter import w, h, r, dt, alpha, doGraph, doPrint
-from Base import molecule_list, Energy, Entropy, Temperature, E_0, S_0
+from parameter import w, h, r, dt, alpha, doGraph, doPrint, VanDerGulinyan
+from Base import molecule_list, Energy, Entropy, Temperature, E_0, S_0, bubuh
 from Maxwell_demon import dimon
 import keyboard
 
 if doGraph:
     time0 = time.time()
     # Массивы для графиков
-    GraphTime = []
-    Et = []
-    St = []
-    Tt = []
+    GraphTime = [] # Массив времён
+    Et = [] # Массив энергий всего сосуда
+    St = [] # Массив энтропий всего сосуда
+    Tt = [] # Массив температур всего сосуда
+    Tdt = [] # Массив температуры демона
+    Nl = [] # Массив количества молекул слева
+    Nr = [] # Массив количества молекул справа
     MegaFile = open('Graph data/Data.txt', 'w')
 
+# Характеристики Демона
 Demons_Entropy = 0
+Demons_Temperature = 250
 
 xs = []  # Список x-овых координат молекул
 ys = []  # Список y-овых координат молекул
@@ -31,9 +36,12 @@ for molecule in molecule_list:
 # функция обновления
 def tritt():
     global Demons_Entropy
+    global Demons_Temperature
     coords.clear()
     xs.clear()
     ys.clear()
+    nl = 0
+    nr = 0
 
     # Цикл, обрабатывающий физику для каждой молекулы
     for molecule in molecule_list:
@@ -43,12 +51,22 @@ def tritt():
         if molecule.y <= r or molecule.y >= h - r:
             molecule.Vy = -molecule.Vy
 
-        can_move, Demons_Entropy = dimon(molecule, Demons_Entropy)
+        can_move, Demons_Entropy, Demons_Temperature = dimon(molecule, Demons_Entropy, Demons_Temperature)
 
+        if VanDerGulinyan and can_move:
+            for other in molecule_list:
+                if (other.x - molecule.x)**2 + (other.y - molecule.y)**2 < r**2:
+                    bubuh(molecule, other)
         if can_move:
             # Обновление координат молекул
             molecule.x = molecule.x + molecule.Vx * dt / alpha
             molecule.y = molecule.y + molecule.Vy * dt / alpha
+
+        if doGraph:
+            if molecule.x < w/2:
+                nl = nl + 1
+            else:
+                nr = nr + 1
 
         # Обновление списков для MathPlotLib
         x = molecule.x
@@ -57,14 +75,16 @@ def tritt():
         ys.append(y)
         coords.append([x, y])
 
-        # Если уж не выводим в отельный файл
         if doPrint:  # Пишу энергию, энтропию
             print(Entropy() - S_0, Entropy() - S_0 + Demons_Entropy)
     if doGraph:
         GraphTime.append(time.time() - time0)
         Et.append(Energy())
-        St.append(Entropy())
+        St.append(Entropy() - S_0 + Demons_Entropy)
         Tt.append(Temperature())
+        Tdt.append(Demons_Temperature)
+        Nl.append(nl)
+        Nr.append(nr)
 
 
 # ==============================
@@ -90,9 +110,9 @@ def animirien(frame):
     ax.set_ylim(0, h)
     # Рисование полосочки, означающей демона
     ax.axvline(w / 2, color='green', linestyle='solid')
-    if keyboard.is_pressed('q'):  # Безопасно закрывает всё
+    if keyboard.is_pressed('w'):  # Безопасно закрывает всё
         for t in range(len(GraphTime)):
-            print(GraphTime[t], Et[t], St[t], Tt[t], file=MegaFile)
+            print(GraphTime[t], Et[t], St[t], Tt[t], Tdt[t], Nl[t], Nr[t], file=MegaFile)
         MegaFile.close()
         plt.close()
 
