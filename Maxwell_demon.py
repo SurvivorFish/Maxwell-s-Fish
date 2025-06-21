@@ -5,7 +5,7 @@ from Base import Sphere, Temperature
 from parameter import w, h, N, dt, alpha, m, k
 
 # Sarcophilus harrisii
-type_of_Dmitriy = 1  # Тип демона
+type_of_Dmitriy = 2  # Тип демона
 
 
 def dimon(s: Sphere, Demons_Entropy: float, Demons_Temperature: float):
